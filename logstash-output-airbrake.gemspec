@@ -1,12 +1,12 @@
 Gem::Specification.new do |s|
   s.name            = "logstash-output-airbrake"
   s.version         = "0.1.0"
-  s.licenses        = ["MIT"]
+  s.licenses        = ["Apache License (2.0)"]
   s.summary         = "Logstash Output to Airbrake"
   s.description     = "Output events to Airbrake"
   s.authors         = ["TEA"]
   s.email           = 'technique@tea-ebook.com'
-  s.homepage        = "http://www.tea-ebook.com/"
+  s.homepage        = "https://github.com/TEA-ebook/logstash-output-airbrake"
   s.require_paths   = ["lib"]
 
   # Files
