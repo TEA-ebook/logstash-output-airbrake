@@ -25,7 +25,7 @@ class LogStash::Outputs::Airbrake < LogStash::Outputs::Base
   config :host, :validate => :string
 
   # Port of the Airbrake server.
-  config :port, :validate => :int
+  config :port, :validate => :number
 
   public
   def register
