@@ -43,9 +43,6 @@ class LogStash::Outputs::Airbrake < LogStash::Outputs::Base
   def receive(event)
     return unless output?(event)
 
-    puts event.to_hash.inspect
-    return
-
     Airbrake.notify(
       :error_class   => @error_type,
       :error_message => event['message'],
