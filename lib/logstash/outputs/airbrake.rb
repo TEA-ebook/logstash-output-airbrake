@@ -43,11 +43,44 @@ class LogStash::Outputs::Airbrake < LogStash::Outputs::Base
   def receive(event)
     return unless output?(event)
 
-    Airbrake.notify(
-      :error_class   => @error_type,
-      :error_message => event['message'],
-      :parameters    => event.to_hash
-    )
+    send_notice(build_notice(event))
   end # def receive
 
+  private
+  def build_notice(event)
+    opts = {
+      :error_class   => @error_type,
+      :error_message => event['message'],
+      :host          => event['host'],
+      :parameters    => event.to_hash
+    }
+
+    LogStash::Outputs::Airbrake::Notice.new(
+      Airbrake.configuration.merge(opts)
+    )
+  end # def build_notice
+
+  private
+  def send_notice(notice)
+    configuration = Airbrake.configuration
+    sender = Airbrake.sender
+
+    return unless configuration.configured? && configuration.public?
+
+    if configuration.async?
+      configuration.async.call(notice)
+      nil # make sure we never set env["airbrake.error_id"] for async notices
+    else
+      sender.send_to_airbrake(notice)
+    end
+  end
+
 end # class LogStash::Outputs::Airbrake
+
+class LogStash::Outputs::Airbrake::Notice < Airbrake::Notice
+  def initialize(opts = {})
+    super(opts)
+
+    @hostname = opts[:host] || 'unknown'
+  end
+end
