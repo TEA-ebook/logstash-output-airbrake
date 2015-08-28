@@ -3,6 +3,7 @@ require "logstash/namespace"
 require "logstash/outputs/base"
 
 require "airbrake"
+require "zlib"
 
 # This output lets you send logs to Airbrake.
 class LogStash::Outputs::Airbrake < LogStash::Outputs::Base
@@ -81,6 +82,11 @@ class LogStash::Outputs::Airbrake::Notice < Airbrake::Notice
   def initialize(opts = {})
     super(opts)
 
-    @hostname = opts[:host] || 'unknown'
+    @hostname  = opts[:host] || 'unknown'
+
+    # Airbrake uses the backtrace to aggregate notifications so we cheat and
+    # create a dummy backtrace
+    error_crc32 = Zlib::crc32(opts[:error_message])
+    @backtrace = Airbrake::Backtrace.parse("#{error_crc32}:42:in `#{opts[:error_message]}'")
   end
 end

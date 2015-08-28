@@ -25,6 +25,7 @@ describe LogStash::Outputs::Airbrake do
 
   before do
     allow(Airbrake).to receive(:configure)
+    allow(subject).to receive(:send_notice)
 
     subject.register
   end
@@ -40,16 +41,14 @@ describe LogStash::Outputs::Airbrake do
   end
 
   describe "#receive" do
-    let(:event) { LogStash::Event.new("foo" => "bar") }
+    let(:event) { LogStash::Event.new("message" => "bar") }
 
     before do
-      allow(Airbrake).to receive(:notify)
-
       subject.receive(event)
     end
 
     it "should forward the event to Airbrake" do
-      expect(Airbrake).to have_received(:notify).once
+      expect(subject).to have_received(:send_notice).once
     end
   end
 end
