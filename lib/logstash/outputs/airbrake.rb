@@ -86,7 +86,7 @@ class LogStash::Outputs::Airbrake::Notice < Airbrake::Notice
 
     # Airbrake uses the backtrace to aggregate notifications so we cheat and
     # create a dummy backtrace
-    error_crc32 = Zlib::crc32(opts[:error_message])
-    @backtrace = Airbrake::Backtrace.parse("#{error_crc32}:42:in `#{opts[:error_message]}'")
+    error_crc32 = Zlib::crc32(opts[:error_message].to_s)
+    @backtrace = Airbrake::Backtrace.parse("#{error_crc32}:42:in `#{opts[:error_message].to_s}'")
   end
 end
